@@ -1,12 +1,15 @@
+#include <cmath>
+#include <QDebug>
 #include "amsmodel.h"
 
 Level::Level(float h, float a1, float a2, float a3, float a4)
 {
-    levelHigh = h;
+    levelHeight = h;
     angleLeftKL = a1;
     angleLeftKR = a2;
     angleRightKL = a3;
     angleRightKR = a4;
+    dislocation = 0;
 
 }
 
@@ -50,8 +53,9 @@ AMSModel::columnCount(const QModelIndex &/*parent*/)const{
      * левый пояс правый круг
      * правый пояс левый круг
      * правыйпояс правый круг
+     * смещение
      */
-    return 5;
+    return 6;
 }
 
 QVariant
@@ -64,7 +68,7 @@ AMSModel::data(const QModelIndex &index, int role) const{
     if (role == Qt::DisplayRole){
         switch(col){
         case 0:
-            return levels[row].levelHigh;
+            return levels[row].levelHeight;
         case 1:
             return levels[row].angleLeftKL;
         case 2:
@@ -73,6 +77,8 @@ AMSModel::data(const QModelIndex &index, int role) const{
             return levels[row].angleRightKL;
         case 4:
             return levels[row].angleRightKR;
+        case 5:
+            return calcDislocation(row, levels, dist);
         }
     }
     return QVariant();
@@ -91,7 +97,7 @@ AMSModel::setData(const QModelIndex & index, const QVariant & value, int role){
     {
         switch(col){
         case 0:
-            levels[row].levelHigh = value.toFloat();
+            levels[row].levelHeight = value.toFloat();
             break;
         case 1:
             levels[row].angleLeftKL = value.toFloat();
@@ -126,6 +132,8 @@ AMSModel::headerData(int section, Qt::Orientation orientation, int role) const{
                 return QString(tr("Правый(KL)"));
             case 4:
                 return QString(tr("Правый(KR)"));
+            case 5:
+                return QString(tr("Смещение (мм)"));
             }
         }
     }
@@ -159,4 +167,47 @@ AMSModel::getDistance(){
 QVector<Level>
 AMSModel::getLevels(){
     return levels;
+}
+void
+AMSModel::ifDataChanged(){
+}
+
+float
+calcDislocation(int level, QVector<Level> &levels, float dist){
+        qDebug() << "============================================";
+        qDebug() << level;
+        float leftKL, leftKR, rightKL, rightKR;
+        if (levels[level].angleLeftKL > 1800.0)
+            leftKL = levels[level].angleLeftKL - 180.0;
+        else
+            leftKL = levels[level].angleLeftKL;
+        if (levels[level].angleLeftKR > 180)
+            leftKR = levels[level].angleLeftKR - 180;
+        else
+            leftKR = levels[level].angleLeftKR;
+        if (levels[level].angleRightKL> 180)
+            rightKL = levels[level].angleRightKL - 180;
+        else
+            rightKL = levels[level].angleRightKL;
+        if (levels[level].angleRightKR> 180)
+            rightKR = levels[level].angleRightKR - 180;
+        else
+            rightKR = levels[level].angleRightKR;
+
+        levels[level].averLeft = (leftKL + leftKR)/2.0;
+        qDebug() << "averLeft = " << levels[level].averLeft;
+        levels[level].averRight = (rightKL + rightKR)/2.0;
+        qDebug() << "averRight = " << levels[level].averRight;
+        levels[level].averAngle = (levels[level].averLeft + levels[level].averRight)/2.0;
+        qDebug() << "averAngle = " <<levels[level].averAngle;
+        float distance = levels[level].averAngle - levels[0].averAngle;
+        qDebug() << "levels[0].averAngle = " << levels[0].averAngle;
+        qDebug() << "distance = " << distance;
+        float t = tanf(distance * M_PI/180.0);
+        qDebug() << "tan = " << t;
+        qDebug() << "dist = " << dist;
+        float dislocation = t*dist*1000;
+        qDebug() << "dislovation = " << dislocation;
+        levels[level].dislocation = dislocation;
+        return dislocation;
 }

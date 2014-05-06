@@ -12,17 +12,24 @@ const QString XML_VERSION("1.0");
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
+    ui(new Ui::MainWindow),
     fileName(),
     dotsX(0),
     dotsY(0),
-    dotsZ(0),
-    ui(new Ui::MainWindow)
+    dotsZ(0)
 {
     ui->setupUi(this);
     ui->tabWidget->setTabText(0, "Ось X");
     ui->tabWidget->setTabText(1, "Ось Y");
     ui->tabWidget->setTabText(2, "Диаграммы");
     ui->tabWidget->setVisible(false);
+    //setup views
+    sceneX = new QGraphicsScene(this);
+    sceneY = new QGraphicsScene(this);
+    sceneZ = new QGraphicsScene(this);
+    ui->graphicsViewX->setScene(sceneX);
+    ui->graphicsViewY->setScene(sceneY);
+    ui->graphicsViewZ->setScene(sceneZ);
 }
 
 MainWindow::~MainWindow()
@@ -59,10 +66,6 @@ MainWindow::openFile(){
 bool
 MainWindow::readDataFromXML(QDomDocument doc){
     QDomElement elem = doc.documentElement();
-    if(elem.isNull()){
-        qDebug() << tr("Ошибка чтения файла");
-        return false;
-    }
     if(elem.tagName() != "ams"){
         qDebug() << tr("Этот файл не содержит результатов измерений АМС");
         return false;
@@ -143,7 +146,7 @@ MainWindow::saveFile(){
     size_t count = vl.size();
     for(size_t i = 0; i < count; i++){
         QDomElement l = doc.createElement("level");
-        l.setAttribute("height", vl[i].levelHigh);
+        l.setAttribute("height", vl[i].levelHeight);
         l.setAttribute("leftKL", vl[i].angleLeftKL);
         l.setAttribute("leftKR", vl[i].angleLeftKR);
         l.setAttribute("rightKL", vl[i].angleRightKL);
@@ -157,7 +160,7 @@ MainWindow::saveFile(){
     count = vl.size();
     for(size_t i = 0; i < count; i++){
         QDomElement l = doc.createElement("level");
-        l.setAttribute("height", vl[i].levelHigh);
+        l.setAttribute("height", vl[i].levelHeight);
         l.setAttribute("leftKL", vl[i].angleLeftKL);
         l.setAttribute("leftKR", vl[i].angleLeftKR);
         l.setAttribute("rightKL", vl[i].angleRightKL);
@@ -209,6 +212,7 @@ MainWindow::newFile(){
         ui->tabWidget->setVisible(true);
         ui->levels_X->setModel(modelX);
         ui->levels_Y->setModel(modelY);
+        setupView();
     }
 }
 
@@ -217,32 +221,27 @@ MainWindow::setupView(){
     dotsX.resize(modelX->getLevels().size());
     dotsY.resize(modelY->getLevels().size());
     //dotsZ.resize(mi)
-    sceneX = new QGraphicsScene(this);
-    sceneY = new QGraphicsScene(this);
-    sceneZ = new QGraphicsScene(this);
-    ui->graphicsViewX->setScene(sceneX);
-    ui->graphicsViewY->setScene(sceneY);
-    ui->graphicsViewZ->setScene(sceneZ);
     QBrush redBrush(Qt::red);
     QBrush blueBrush(Qt::blue);
     QPen blackpen(Qt::black);
-    blackpen.setWidth(6);
+    blackpen.setWidth(3);
     int x = 0;
     int y = 0;
 
-    foreach(auto r, dotsX){
-        r = sceneX->addRect(x, y, 10, 10, blackpen, redBrush);
+    for(int i = 0; i < dotsX.size(); i++){
+        dotsX[i] = sceneX->addRect(x, y, 10, 10, blackpen, redBrush);
         y += 100;
     }
     x = 0;
     y = 0;
-    foreach(r, dotsY){
-        r = sceneY->addRect(x, y, 10, 10, blackpen, blueBrush);
+    for(int i = 0; i < dotsY.size(); i++){
+        dotsY[i] = sceneY->addRect(x, y, 10, 10, blackpen, blueBrush);
         y += 100;
     }
-
+/*
     ellipse = scene->addEllipse(0, 0, 100, 100, blackpen, redBrush);
     rectangle = scene->addRect(-25, 25, 50, 50, blackpen, blueBrush);
     rectangle->setFlag(QGraphicsItem::ItemIsMovable);
+    */
 
 }

@@ -14,8 +14,7 @@ AMSModel::AMS_type
 NewAMSDialog::getType(){
     if (ui->type->currentText() == "Мачта")
         return AMSModel::MAST;
-    else if (ui->type->currentText() == "Башня")
-        return AMSModel::TOWER;
+    return AMSModel::TOWER;
 }
 
 int

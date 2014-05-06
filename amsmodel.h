@@ -12,7 +12,7 @@
 struct Level{
     Level();
     Level(float, float, float, float, float);
-    float levelHigh;
+    float levelHeight;
     float angleLeftKL;
     int angleLeftKLm[3];
     float angleLeftKR;
@@ -21,6 +21,13 @@ struct Level{
     int angleRightKLm[3];
     float angleRightKR;
     int angleRightKRm[3];
+    float averLeft;
+    int averLeftm[3];
+    float averRight;
+    int averRightm[3];
+    float averAngle;
+    int averAnglem[3];
+    float dislocation;
 };
 
 class AMSModel : public QAbstractTableModel
@@ -48,10 +55,13 @@ public:
     QVector<Level> getLevels();
 signals:
 public slots:
+    void ifDataChanged();
 private:
     AMSModel::AMS_type type;
     float dist;
-    QVector<Level> levels;
+    mutable QVector<Level> levels;
 };
+
+float calcDislocation(int level, QVector<Level> &, float dist);
 
 #endif // AMSMODEL_H

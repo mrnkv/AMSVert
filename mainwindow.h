@@ -32,7 +32,7 @@ private:
     AMSModel::AMS_type amsType;
     bool readDataFromXML(QDomDocument);
     QString fileName;
-    QGraphicsScene *sceneX, *sceneY, sceneZ;
+    QGraphicsScene *sceneX, *sceneY, *sceneZ;
     QVector<QGraphicsRectItem*> dotsX, dotsY, dotsZ;
     void setupView();
 
