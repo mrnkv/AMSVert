@@ -29,6 +29,18 @@ struct Level{
     int averAnglem[3];
     float dislocation;
 };
+/*
+ * Структура для описания измеренной точки
+ */
+
+struct MesPoint{
+    QString tc; //круг теодолита
+    int num; // номер точки
+    float va; // вертикальный угол
+    float ha; // горизонтальный угол
+    float nva;// вертикальный "нормализованный" угол
+    float nha;// горизонтальный "номализованный" угол
+};
 
 class AMSModel : public QAbstractTableModel
 

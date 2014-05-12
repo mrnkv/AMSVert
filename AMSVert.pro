@@ -3,6 +3,7 @@
 # Project created by QtCreator 2014-04-18T20:54:29
 #
 #-------------------------------------------------
+QMAKE_CXXFLAGS += -std=c++11
 
 QT       += core gui xml
 
@@ -15,11 +16,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     newamsdialog.cpp \
-    amsmodel.cpp
+    amsmodel.cpp \
+    amsfromfiles.cpp
 
 HEADERS  += mainwindow.h \
     newamsdialog.h \
-    amsmodel.h
+    amsmodel.h \
+    amsfromfiles.h
 
 FORMS    += mainwindow.ui \
-    newamsdialog.ui
+    newamsdialog.ui \
+    amsfromfiles.ui

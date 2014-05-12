@@ -1,12 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "newamsdialog.h"
+#include "amsfromfiles.h"
 #include <QTableWidget>
 #include <QDebug>
 #include <QtXml/QDomDocument>
 #include <QFile>
 #include <QFileDialog>
-#include <QTextStream>
+#include <QStringList>
 
 const QString XML_VERSION("1.0");
 
@@ -61,6 +62,131 @@ MainWindow::openFile(){
             file.close();
         }
     }
+}
+
+QVector<MesPoint>
+MainWindow::readPoints(QTextStream &stream){
+    QVector<MesPoint> points;
+    QString str;
+    while (!stream.atEnd()){
+        str = stream.readLine();
+        QStringList l = str.split(" ", QString::SkipEmptyParts);
+        if(l.size() == 5){
+            bool num = false;
+            bool vangle = false;
+            bool hangle = false;
+            l.at(1).toInt(&num);
+            l.at(2).toFloat(&vangle);
+            l.at(3).toFloat(&hangle);
+            if(num && vangle && hangle){
+                MesPoint point;
+                point.tc = l.at(0);
+                point.num = l.at(1).toInt();
+                point.va = l.at(2).toFloat();
+                point.ha = l.at(3).toFloat();
+                if(point.va > 180)
+                    point.nva = 360 - point.va;
+                else
+                    point.nva = point.va;
+                if(point.ha > 180)
+                    point.nha = point.ha - 180;
+                else
+                    point.nha = point.ha;
+                points.push_back(point);
+            }
+        }
+    }
+    if(stream.status() != QTextStream::Ok){
+        qDebug() << "File reading error...";
+    }
+    return points;
+}
+
+void
+MainWindow::pointsToModel(QVector<MesPoint> points, AMSModel* model){
+    if(points.size() % 4 != 0){
+        qDebug () << "Ошибка! Число точек должно быть кратно 4";
+        return;
+    }
+    //отсортируем по высоте
+    qSort(points.begin(), points.end(), [](MesPoint &a, MesPoint &b){return a.nva < b.nva;});
+    QVector<MesPoint> level;
+    //теперь по 4 точки в уровне отсортируем по гор углу
+    // и забьем в модель.
+    auto i = points.begin();
+    while(i != points.end()){
+        level.push_back(*i); i++;
+        level.push_back(*i); i++;
+        level.push_back(*i); i++;
+        level.push_back(*i); i++;
+        qSort(level.begin(), level.end(), [](MesPoint &a, MesPoint &b){return a.nha < b.nha;});
+        float lKL, lKR, rKL, rKR;
+        if(level[0].tc.contains("F1")){
+            lKL = level[0].ha; lKR = level[1].ha;
+        }else{
+            lKL = level[1].ha; lKR = level[0].ha;
+        }
+        if(level[2].tc.contains("F1")){
+            rKL = level[2].ha; rKR = level[3].ha;
+        }else{
+            rKL = level[3].ha; rKR = level[2].ha;
+        }
+        Level l(0, lKL, lKR, rKL, rKR);
+        model->addLevel(l);
+        level.clear();
+    }
+    return;
+}
+
+
+void
+MainWindow::createFromSDR(){
+    /*
+     * SDR файл содержит строки с данными измеренных углов
+     * 09F1     228     91.14222        201.47056   Y
+     * 1 поле -- круг теодолита
+     * 2 поле -- номер точки
+     * 3 поле -- вертикальный угол на засечку
+     * 4 -- горизонтальный угол
+     * 5 -- какая-то буква
+     * кроме того в начале файла идет еще какая-то служебная информация
+     */
+    qDebug() << "Creating from SDR file...";
+    AmsFromFiles *dialog = new AmsFromFiles(this);
+    if (dialog->exec() != QDialog::Accepted)
+        return;
+
+    QString fileX = dialog->getFileX();
+    QString fileY = dialog->getFileY();
+    float distX = dialog->getDistX();
+    float distY = dialog->getDistY();
+
+    qDebug() << fileX << fileY << distX << distY;
+
+    QFile file;
+    QVector<MesPoint> points;
+    QTextStream stream;
+    //read X file and create modelX
+    file.setFileName(fileX);
+    if(!file.open(QIODevice::ReadOnly))
+        return;
+    stream.setDevice(&file);
+    points = readPoints(stream);
+    pointsToModel(points, modelX);
+    file.close();
+    //read Y file and create modelY
+    file.setFileName(fileY);
+    if(!file.open(QIODevice::ReadOnly))
+        return;
+    stream.setDevice(&file);
+    points = readPoints(stream);
+    pointsToModel(points, modelY);
+    file.close();
+    modelX->setDistance(distX);
+    modelY->setDistance(distY);
+    ui->tabWidget->setVisible(true);
+    ui->levels_X->setModel(modelX);
+    ui->levels_Y->setModel(modelY);
 }
 
 bool

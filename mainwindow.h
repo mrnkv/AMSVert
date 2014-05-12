@@ -5,6 +5,7 @@
 #include <QDomDocument>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QTextStream>
 
 #include "amsmodel.h"
 
@@ -25,6 +26,7 @@ public slots:
     bool saveFileAs();
     void exitProg();
     void newFile();
+    void createFromSDR();
     
 private:
     Ui::MainWindow *ui;
@@ -34,8 +36,9 @@ private:
     QString fileName;
     QGraphicsScene *sceneX, *sceneY, *sceneZ;
     QVector<QGraphicsRectItem*> dotsX, dotsY, dotsZ;
+    QVector<MesPoint> readPoints(QTextStream&);
+    void pointsToModel(QVector<MesPoint>, AMSModel*);
     void setupView();
-
 };
 
 #endif // MAINWINDOW_H

@@ -79,7 +79,7 @@
      <x>0</x>
      <y>0</y>
      <width>611</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -88,6 +88,7 @@
     </property>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
+    <addaction name="actionCreate_from"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
     <addaction name="separator"/>
@@ -139,6 +140,11 @@
   <action name="actionNew">
    <property name="text">
     <string>New</string>
+   </property>
+  </action>
+  <action name="actionCreate_from">
+   <property name="text">
+    <string>Create from ...</string>
    </property>
   </action>
  </widget>
@@ -225,6 +231,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionCreate_from</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>createFromSDR()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>305</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>311</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openFile()</slot>
@@ -232,5 +254,6 @@
   <slot>saveFileAs()</slot>
   <slot>exitProg()</slot>
   <slot>newFile()</slot>
+  <slot>createFromSDR()</slot>
  </slots>
 </ui>
