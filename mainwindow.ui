@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_X">
        <attribute name="title">
@@ -79,7 +79,7 @@
      <x>0</x>
      <y>0</y>
      <width>611</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -238,8 +238,8 @@
    <slot>createFromSDR()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>305</x>
-     <y>311</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>305</x>

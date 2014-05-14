@@ -8,6 +8,9 @@ AmsFromFiles::AmsFromFiles(QWidget *parent) :
     ui(new Ui::AmsFromFiles)
 {
     ui->setupUi(this);
+    ui->amsType->addItem("Мачта");
+    ui->amsType->addItem("Башня");
+
 }
 
 AmsFromFiles::~AmsFromFiles()
@@ -24,6 +27,7 @@ float
 AmsFromFiles::getDistY(){
     return ui->distY->value();
 }
+
 
 QString
 AmsFromFiles::getFileX(){
@@ -50,3 +54,9 @@ AmsFromFiles::selectYFile(){
     ui->fileY->setText(fileYname);
 }
 
+AMSModel::AMS_type
+AmsFromFiles::getType(){
+    if (ui->amsType->currentText() == "Мачта")
+        return AMSModel::MAST;
+    return AMSModel::TOWER;
+}

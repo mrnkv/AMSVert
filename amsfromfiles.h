@@ -2,6 +2,7 @@
 #define AMSFROMFILES_H
 
 #include <QDialog>
+#include "newamsdialog.h"
 
 namespace Ui {
 class AmsFromFiles;
@@ -18,6 +19,8 @@ public:
     float getDistY();
     QString getFileX();
     QString getFileY();
+    AMSModel::AMS_type getType();
+
 public slots:
     void selectXFile();
     void selectYFile();

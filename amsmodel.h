@@ -65,9 +65,8 @@ public:
     AMSModel::AMS_type getType();
     float getDistance();
     QVector<Level> getLevels();
+    void clearData();
 signals:
-public slots:
-    void ifDataChanged();
 private:
     AMSModel::AMS_type type;
     float dist;

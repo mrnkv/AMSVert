@@ -54,8 +54,9 @@ AMSModel::columnCount(const QModelIndex &/*parent*/)const{
      * правый пояс левый круг
      * правыйпояс правый круг
      * смещение
+     * превышение
      */
-    return 6;
+    return 7;
 }
 
 QVariant
@@ -70,15 +71,23 @@ AMSModel::data(const QModelIndex &index, int role) const{
         case 0:
             return levels[row].levelHeight;
         case 1:
-            return levels[row].angleLeftKL;
+            return QString::number(levels[row].angleLeftKL, 'f', 4);
         case 2:
-            return levels[row].angleLeftKR;
+            return QString::number(levels[row].angleLeftKR, 'f', 4);
         case 3:
-            return levels[row].angleRightKL;
+            return QString::number(levels[row].angleRightKL, 'f', 4);
         case 4:
-            return levels[row].angleRightKR;
+            return QString::number(levels[row].angleRightKR, 'f', 4);
         case 5:
-            return calcDislocation(row, levels, dist);
+            return QString::number(calcDislocation(row, levels, dist), 'f', 0);
+        case 6:
+            float m = (this->type == AMSModel::MAST ? 1500 : 1000);
+            float dop = 1000*levels[row].levelHeight/m;
+            float dis = calcDislocation(row, levels, dist);
+            if(dop > abs(dis))
+                return QString("Норма");
+            else
+                return QString::number(abs(dis) - dop);
         }
     }
     return QVariant();
@@ -111,6 +120,7 @@ AMSModel::setData(const QModelIndex & index, const QVariant & value, int role){
         case 4:
             levels[row].angleRightKR = value.toFloat();;
         }
+        emit this->dataChanged(index,index);
     }
     return true;
 }
@@ -134,6 +144,8 @@ AMSModel::headerData(int section, Qt::Orientation orientation, int role) const{
                 return QString(tr("Правый(KR)"));
             case 5:
                 return QString(tr("Смещение (мм)"));
+            case 6:
+                return QString(tr("Превышение"));
             }
         }
     }
@@ -168,8 +180,10 @@ QVector<Level>
 AMSModel::getLevels(){
     return levels;
 }
+
 void
-AMSModel::ifDataChanged(){
+AMSModel::clearData(){
+    levels.clear();
 }
 
 float

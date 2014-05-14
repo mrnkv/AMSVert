@@ -27,7 +27,7 @@ public slots:
     void exitProg();
     void newFile();
     void createFromSDR();
-    
+    void setupView();
 private:
     Ui::MainWindow *ui;
     AMSModel *modelX, *modelY;
@@ -36,9 +36,10 @@ private:
     QString fileName;
     QGraphicsScene *sceneX, *sceneY, *sceneZ;
     QVector<QGraphicsRectItem*> dotsX, dotsY, dotsZ;
+    QVector<QGraphicsLineItem*> linesX, linesY, linesZ;
     QVector<MesPoint> readPoints(QTextStream&);
     void pointsToModel(QVector<MesPoint>, AMSModel*);
-    void setupView();
+
 };
 
 #endif // MAINWINDOW_H

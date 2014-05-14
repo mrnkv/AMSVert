@@ -8,7 +8,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QStringList>
-
+#include <iostream>
 const QString XML_VERSION("1.0");
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -31,6 +31,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsViewX->setScene(sceneX);
     ui->graphicsViewY->setScene(sceneY);
     ui->graphicsViewZ->setScene(sceneZ);
+    ui->graphicsViewX->scale(1, -1);
+    ui->graphicsViewY->scale(1, -1);
+    //models
+    this->modelX = new AMSModel(this);
+    this->modelY = new AMSModel(this);
+    connect(this->modelX, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(setupView()));
+    connect(this->modelY, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(setupView()));
+    //setupView();
 }
 
 MainWindow::~MainWindow()
@@ -54,6 +62,7 @@ MainWindow::openFile(){
                     ui->tabWidget->setVisible(true);
                     ui->levels_X->setModel(modelX);
                     ui->levels_Y->setModel(modelY);
+                    setupView();
                 }
             }
             else{
@@ -109,7 +118,12 @@ MainWindow::pointsToModel(QVector<MesPoint> points, AMSModel* model){
         return;
     }
     //отсортируем по высоте
-    qSort(points.begin(), points.end(), [](MesPoint &a, MesPoint &b){return a.nva < b.nva;});
+    qSort(points.begin(), points.end(), [](MesPoint &a, MesPoint &b){return a.nva > b.nva;});
+    for(auto i = points.begin(); i != points.end(); ++i){
+        std::cout.setf(std::ios::fixed, std::ios::floatfield);
+        std::cout.precision(4);
+        std::cout << (*i).ha <<"\t" << (*i).va <<"\t" << (*i).nva << std::endl;
+    }
     QVector<MesPoint> level;
     //теперь по 4 точки в уровне отсортируем по гор углу
     // и забьем в модель.
@@ -160,6 +174,8 @@ MainWindow::createFromSDR(){
     QString fileY = dialog->getFileY();
     float distX = dialog->getDistX();
     float distY = dialog->getDistY();
+    this->modelX->clearData();
+    this->modelY->clearData();
 
     qDebug() << fileX << fileY << distX << distY;
 
@@ -184,9 +200,13 @@ MainWindow::createFromSDR(){
     file.close();
     modelX->setDistance(distX);
     modelY->setDistance(distY);
+    modelX->setType(dialog->getType());
+    modelY->setType(dialog->getType());
     ui->tabWidget->setVisible(true);
     ui->levels_X->setModel(modelX);
     ui->levels_Y->setModel(modelY);
+
+
 }
 
 bool
@@ -210,8 +230,8 @@ MainWindow::readDataFromXML(QDomDocument doc){
         qDebug() << tr("Неверный тип АМС");
         return false;
     }
-    this->modelX = new AMSModel(this);
-    this->modelY = new AMSModel(this);
+    this->modelX->clearData();
+    this->modelY->clearData();
     modelX->setType(type);
     modelY->setType(type);
     size_t count = elem.childNodes().count();
@@ -338,12 +358,20 @@ MainWindow::newFile(){
         ui->tabWidget->setVisible(true);
         ui->levels_X->setModel(modelX);
         ui->levels_Y->setModel(modelY);
-        setupView();
+
     }
 }
 
 void
 MainWindow::setupView(){
+    dotsX.clear();
+    dotsY.clear();
+    dotsZ.clear();
+    sceneX->clear();
+    sceneY->clear();
+    int blockWidth = 10;
+    int scaleX = 2;
+    int scaleY = 15;
     dotsX.resize(modelX->getLevels().size());
     dotsY.resize(modelY->getLevels().size());
     //dotsZ.resize(mi)
@@ -351,18 +379,41 @@ MainWindow::setupView(){
     QBrush blueBrush(Qt::blue);
     QPen blackpen(Qt::black);
     blackpen.setWidth(3);
-    int x = 0;
-    int y = 0;
+    //drow bound lines
+    QModelIndex hxi = modelX->index(dotsX.size()-1, 0);
+    float hx = modelX->data(hxi, Qt::DisplayRole).toFloat();
+    sceneX->addLine(0, 0, hx*scaleX, hx*scaleY);
+    sceneX->addLine(0, 0, -hx*scaleX, hx*scaleY);
+    QModelIndex hyi = modelY->index(dotsY.size()-1, 0);
+    float hy = modelY->data(hyi, Qt::DisplayRole).toFloat();
+    sceneY->addLine(0, 0, hy*scaleX, hy*scaleY);
+    sceneY->addLine(0, 0, -hy*scaleX, hy*scaleY);
 
+    //drow blocks and lines
+    float x = 0;
+    float y = 0;
     for(int i = 0; i < dotsX.size(); i++){
-        dotsX[i] = sceneX->addRect(x, y, 10, 10, blackpen, redBrush);
-        y += 100;
+        QModelIndex xi = this->modelX->index(i, 5);
+        QModelIndex hi = this->modelY->index(i, 0);
+        float disl = modelX->data(xi, Qt::DisplayRole).toFloat();
+        float h = modelX->data(hi, Qt::DisplayRole).toFloat();
+        float xcoord = disl*scaleX;
+        float ycoord = h*scaleY;
+        sceneX->addLine(x, y, xcoord, ycoord, QPen(Qt::red, 3));
+        dotsX[i] = sceneX->addRect(xcoord-blockWidth/2.0, ycoord-blockWidth/2.0 , blockWidth, blockWidth, blackpen, redBrush);
+        x = xcoord; y = ycoord;
     }
-    x = 0;
-    y = 0;
+    x = 0; y = 0;
     for(int i = 0; i < dotsY.size(); i++){
-        dotsY[i] = sceneY->addRect(x, y, 10, 10, blackpen, blueBrush);
-        y += 100;
+        QModelIndex yi = this->modelY->index(i, 5);
+        QModelIndex hi = this->modelY->index(i, 0);
+        float disl = modelY->data(yi, Qt::DisplayRole).toFloat();
+        float h = modelY->data(hi, Qt::DisplayRole).toFloat();
+        float xcoord = disl*scaleX;
+        float ycoord = h*scaleY;
+        sceneY->addLine(x, y, xcoord, ycoord, QPen(Qt::blue, 3));
+        dotsY[i] = sceneY->addRect(xcoord-blockWidth/2.0, ycoord-blockWidth/2.0 , blockWidth, blockWidth, blackpen, blueBrush);
+        x = xcoord; y = ycoord;
     }
 /*
     ellipse = scene->addEllipse(0, 0, 100, 100, blackpen, redBrush);
