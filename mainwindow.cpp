@@ -48,7 +48,6 @@ MainWindow::~MainWindow()
 
 void
 MainWindow::openFile(){
-    qDebug() << "Opening and reading file...";
     QDomDocument doc;
     fileName = QFileDialog::getOpenFileName(this, tr("Открыть файл"), "",
                                                     tr("Файлы XML (*.xml)"));
@@ -372,6 +371,7 @@ MainWindow::setupView(){
     int blockWidth = 10;
     int scaleX = 2;
     int scaleY = 15;
+    int scaleZ = 5;
     dotsX.resize(modelX->getLevels().size());
     dotsY.resize(modelY->getLevels().size());
     //dotsZ.resize(mi)
@@ -400,7 +400,11 @@ MainWindow::setupView(){
         float xcoord = disl*scaleX;
         float ycoord = h*scaleY;
         sceneX->addLine(x, y, xcoord, ycoord, QPen(Qt::red, 3));
-        dotsX[i] = sceneX->addRect(xcoord-blockWidth/2.0, ycoord-blockWidth/2.0 , blockWidth, blockWidth, blackpen, redBrush);
+        dotsX[i] = sceneX->addRect(xcoord-blockWidth/2.0, ycoord-blockWidth/2.0 ,
+                                   blockWidth, blockWidth, QPen(Qt::red), redBrush);
+        auto text = sceneX->addText(QString("%1m[%2mm]").arg(h).arg(disl));
+        text->setPos(xcoord,ycoord);
+        text->setTransform(QTransform().scale(1, -1));
         x = xcoord; y = ycoord;
     }
     x = 0; y = 0;
@@ -412,13 +416,33 @@ MainWindow::setupView(){
         float xcoord = disl*scaleX;
         float ycoord = h*scaleY;
         sceneY->addLine(x, y, xcoord, ycoord, QPen(Qt::blue, 3));
-        dotsY[i] = sceneY->addRect(xcoord-blockWidth/2.0, ycoord-blockWidth/2.0 , blockWidth, blockWidth, blackpen, blueBrush);
+        dotsY[i] = sceneY->addRect(xcoord-blockWidth/2.0, ycoord-blockWidth/2.0 ,
+                                   blockWidth, blockWidth, QPen(Qt::blue), blueBrush);
+        auto text = sceneY->addText(QString("%1m[%2mm]").arg(h).arg(disl));
+        text->setPos(xcoord,ycoord);
+        text->setTransform(QTransform().scale(1, -1));
         x = xcoord; y = ycoord;
     }
-/*
-    ellipse = scene->addEllipse(0, 0, 100, 100, blackpen, redBrush);
-    rectangle = scene->addRect(-25, 25, 50, 50, blackpen, blueBrush);
-    rectangle->setFlag(QGraphicsItem::ItemIsMovable);
-    */
-
+    //TODO
+    //предусмотреть разные размеры проекций  и начало с разных высот
+    x = 0; y = 0;
+    for(int i = 0; i < dotsY.size(); i++){
+        QModelIndex yi = this->modelY->index(i, 5);
+        QModelIndex hi = this->modelY->index(i, 0);
+        QModelIndex xi = this->modelX->index(i, 5);
+        float dx = modelX->data(xi, Qt::DisplayRole).toFloat();
+        float dy = modelY->data(yi, Qt::DisplayRole).toFloat();
+        float xcoord = dx*scaleZ; float ycoord = dy*scaleZ;
+        QString h = modelY->data(hi, Qt::DisplayRole).toString();
+        sceneZ->addLine(x, y, xcoord, ycoord, QPen(Qt::green, 3));
+        sceneZ->addRect(xcoord-blockWidth/2.0, ycoord-blockWidth/2.0,
+                        blockWidth, blockWidth, QPen(Qt::green), QBrush(Qt::green));
+        x = xcoord; y = ycoord;
+        sceneZ->addText(QString("%1m %2mm").arg(h).arg(sqrt(dx*dx + dy*dy)))->setPos(xcoord,ycoord);
+    }
+    QModelIndex hi = modelY->index(dotsY.size()-1, 0);
+    float h = modelY->data(hi, Qt::DisplayRole).toFloat();
+    qDebug() << "HHHH ===" << h;
+    sceneZ->addEllipse(0 - h*scaleZ/2,0-h*scaleZ/2,
+                       h*scaleZ*2, h*scaleZ*2);
 }
