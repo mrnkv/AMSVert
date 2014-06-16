@@ -78,30 +78,18 @@ MainWindow::readPoints(QTextStream &stream){
     QString str;
     while (!stream.atEnd()){
         str = stream.readLine();
-        QStringList l = str.split(" ", QString::SkipEmptyParts);
-        if(l.size() == 5){
-            bool num = false;
-            bool vangle = false;
-            bool hangle = false;
-            l.at(1).toInt(&num);
-            l.at(2).toFloat(&vangle);
-            l.at(3).toFloat(&hangle);
-            if(num && vangle && hangle){
-                MesPoint point;
-                point.tc = l.at(0);
-                point.num = l.at(1).toInt();
-                point.va = l.at(2).toFloat();
-                point.ha = l.at(3).toFloat();
-                if(point.va > 180)
-                    point.nva = 360 - point.va;
-                else
-                    point.nva = point.va;
-                if(point.ha > 180)
-                    point.nha = point.ha - 180;
-                else
-                    point.nha = point.ha;
-                points.push_back(point);
-            }
+        if(str.left(2) == "09"){
+            MesPoint point;
+            point.tc = str.left(4);
+            point.num = str.mid(20, 16).toInt();
+            point.va = str.mid(52,16).toFloat();
+            point.ha = str.mid(68,16).toFloat();
+            (point.va > 180) ? (point.nva = 360 - point.va) : (point.nva = point.va);
+            (point.ha > 180) ? (point.nha = point.ha - 180) : (point.nha = point.ha);
+            points.push_back(point);
+        }
+        else{
+            continue;
         }
     }
     if(stream.status() != QTextStream::Ok){
@@ -154,17 +142,6 @@ MainWindow::pointsToModel(QVector<MesPoint> points, AMSModel* model){
 
 void
 MainWindow::createFromSDR(){
-    /*
-     * SDR файл содержит строки с данными измеренных углов
-     * 09F1     228     91.14222        201.47056   Y
-     * 1 поле -- круг теодолита
-     * 2 поле -- номер точки
-     * 3 поле -- вертикальный угол на засечку
-     * 4 -- горизонтальный угол
-     * 5 -- какая-то буква
-     * кроме того в начале файла идет еще какая-то служебная информация
-     */
-    qDebug() << "Creating from SDR file...";
     AmsFromFiles *dialog = new AmsFromFiles(this);
     if (dialog->exec() != QDialog::Accepted)
         return;
@@ -175,8 +152,6 @@ MainWindow::createFromSDR(){
     float distY = dialog->getDistY();
     this->modelX->clearData();
     this->modelY->clearData();
-
-    qDebug() << fileX << fileY << distX << distY;
 
     QFile file;
     QVector<MesPoint> points;
@@ -204,8 +179,6 @@ MainWindow::createFromSDR(){
     ui->tabWidget->setVisible(true);
     ui->levels_X->setModel(modelX);
     ui->levels_Y->setModel(modelY);
-
-
 }
 
 bool
@@ -237,31 +210,26 @@ MainWindow::readDataFromXML(QDomDocument doc){
     for(size_t i = 0; i < count; i++){
         QDomNode node = elem.childNodes().at(i);
         if(node.toElement().tagName() == "axis"){
-            if(node.toElement().attribute("axisname") == "X"){
-                float dist = QString(node.toElement().attribute("distance")).toFloat();
+            QString axisName = node.toElement().attribute("axisname");
+            float dist = QString(node.toElement().attribute("distance")).toFloat();
+            if(axisName == "X"){
                 modelX->setDistance(dist);
-                size_t c = node.childNodes().count();
-                for(size_t j = 0; j < c; j++){
-                    QDomElement ln = node.childNodes().at(j).toElement();
-                    Level l(QString(ln.attribute("height")).toFloat(),
-                            QString(ln.attribute("leftKL")).toFloat(),
-                            QString(ln.attribute("leftKR")).toFloat(),
-                            QString(ln.attribute("rightKL")).toFloat(),
-                            QString(ln.attribute("rightKR")).toFloat());
+            }
+            else if(axisName == "Y"){
+                modelY->setDistance(dist);
+            }
+            size_t c = node.childNodes().count();
+            for(size_t j = 0; j < c; j++){
+                QDomElement ln = node.childNodes().at(j).toElement();
+                Level l(QString(ln.attribute("height")).toFloat(),
+                        QString(ln.attribute("leftKL")).toFloat(),
+                        QString(ln.attribute("leftKR")).toFloat(),
+                        QString(ln.attribute("rightKL")).toFloat(),
+                        QString(ln.attribute("rightKR")).toFloat());
+                if(axisName == "X"){
                     modelX->addLevel(l);
                 }
-            }
-            if(node.toElement().attribute("axisname") == "Y"){
-                float dist = QString(node.toElement().attribute("distance")).toFloat();
-                modelY->setDistance(dist);
-                size_t c = node.childNodes().count();
-                for(size_t j = 0; j < c; j++){
-                    QDomElement ln = node.childNodes().at(j).toElement();
-                    Level l(QString(ln.attribute("height")).toFloat(),
-                            QString(ln.attribute("leftKL")).toFloat(),
-                            QString(ln.attribute("leftKR")).toFloat(),
-                            QString(ln.attribute("rightKL")).toFloat(),
-                            QString(ln.attribute("rightKR")).toFloat());
+                else if(axisName == "Y"){
                     modelY->addLevel(l);
                 }
             }

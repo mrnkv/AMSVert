@@ -29,10 +29,10 @@ struct Level{
     int averAnglem[3];
     float dislocation;
 };
+
 /*
  * Структура для описания измеренной точки
  */
-
 struct MesPoint{
     QString tc; //круг теодолита
     int num; // номер точки
