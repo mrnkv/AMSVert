@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 QMAKE_CXXFLAGS += -std=c++11
+INCLUDEPATH += /usr/local/qwt-6.1.0/include
+LIBS += -L/usr/local/qwt-6.1.0/lib -lqwt
 
 QT       += core gui xml
 
@@ -17,12 +19,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     newamsdialog.cpp \
     amsmodel.cpp \
-    amsfromfiles.cpp
+    amsfromfiles.cpp \
+    resultdrawwidget.cpp
 
 HEADERS  += mainwindow.h \
     newamsdialog.h \
     amsmodel.h \
-    amsfromfiles.h
+    amsfromfiles.h \
+    resultdrawwidget.h
 
 FORMS    += mainwindow.ui \
     newamsdialog.ui \

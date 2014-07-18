@@ -188,10 +188,8 @@ AMSModel::clearData(){
 
 float
 calcDislocation(int level, QVector<Level> &levels, float dist){
-        qDebug() << "============================================";
-        qDebug() << level;
         float leftKL, leftKR, rightKL, rightKR;
-        if (levels[level].angleLeftKL > 1800.0)
+        if (levels[level].angleLeftKL > 180.0)
             leftKL = levels[level].angleLeftKL - 180.0;
         else
             leftKL = levels[level].angleLeftKL;
@@ -207,21 +205,12 @@ calcDislocation(int level, QVector<Level> &levels, float dist){
             rightKR = levels[level].angleRightKR - 180;
         else
             rightKR = levels[level].angleRightKR;
-
         levels[level].averLeft = (leftKL + leftKR)/2.0;
-        qDebug() << "averLeft = " << levels[level].averLeft;
         levels[level].averRight = (rightKL + rightKR)/2.0;
-        qDebug() << "averRight = " << levels[level].averRight;
         levels[level].averAngle = (levels[level].averLeft + levels[level].averRight)/2.0;
-        qDebug() << "averAngle = " <<levels[level].averAngle;
         float distance = levels[level].averAngle - levels[0].averAngle;
-        qDebug() << "levels[0].averAngle = " << levels[0].averAngle;
-        qDebug() << "distance = " << distance;
         float t = tanf(distance * M_PI/180.0);
-        qDebug() << "tan = " << t;
-        qDebug() << "dist = " << dist;
         float dislocation = t*dist*1000;
-        qDebug() << "dislovation = " << dislocation;
         levels[level].dislocation = dislocation;
         return dislocation;
 }

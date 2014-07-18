@@ -28,18 +28,16 @@ public slots:
     void newFile();
     void createFromSDR();
     void setupView();
+    void drawResults();
 private:
     Ui::MainWindow *ui;
     AMSModel *modelX, *modelY;
     AMSModel::AMS_type amsType;
     bool readDataFromXML(QDomDocument);
     QString fileName;
-    QGraphicsScene *sceneX, *sceneY, *sceneZ;
-    QVector<QGraphicsRectItem*> dotsX, dotsY, dotsZ;
-    QVector<QGraphicsLineItem*> linesX, linesY, linesZ;
+    QVector<QPointF> dotsX, dotsY;
     QVector<MesPoint> readPoints(QTextStream&);
     void pointsToModel(QVector<MesPoint>, AMSModel*);
-
 };
 
 #endif // MAINWINDOW_H

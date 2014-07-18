@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>611</width>
-    <height>623</height>
+    <width>522</width>
+    <height>618</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_X">
        <attribute name="title">
@@ -29,7 +29,24 @@
          <widget class="QTableView" name="levels_X"/>
         </item>
         <item>
-         <widget class="QGraphicsView" name="graphicsViewX"/>
+         <widget class="ResultDrawWidget" name="resultDrawX" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ResultDrawWidget" name="resultDrawY" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -46,19 +63,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Page</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QGraphicsView" name="graphicsViewXold"/>
-        </item>
-        <item>
-         <widget class="QGraphicsView" name="graphicsViewZ"/>
-        </item>
-       </layout>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -68,7 +72,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>611</width>
+     <width>522</width>
      <height>25</height>
     </rect>
    </property>
@@ -139,6 +143,14 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ResultDrawWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">resultdrawwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
