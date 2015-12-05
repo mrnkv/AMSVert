@@ -10,7 +10,6 @@ Level::Level(float h, float a1, float a2, float a3, float a4)
     angleRightKL = a3;
     angleRightKR = a4;
     dislocation = 0;
-
 }
 
 Level::Level()
@@ -21,23 +20,21 @@ AMSModel::AMSModel(QObject *parent) :
     QAbstractTableModel(parent),
     levels(0)
 {
-
 }
+
 AMSModel::AMSModel(AMSModel::AMS_type type,
          size_t lvls,
          float dist,
          QObject *parent):
     QAbstractTableModel(parent),
-    levels(lvls)
+    levels()
 {
     this->type = type;
     this->dist = dist;
-    /*
-    Level l1 = Level(0, 41.5225, 221.5244, 43.53, 223.5292);
-    levels[0] = l1;
-    l1 = Level(7.2, 41.5497, 221.5517, 43.5536, 223.5556);
-    levels[1] = l1;
-    */
+    for(size_t i = 0; i < lvls; ++i){
+        Level l(0,0,0,0,0);
+        levels.push_back(l);
+    }
 }
 
 int

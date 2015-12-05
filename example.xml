@@ -1,0 +1,30 @@
+<!DOCTYPE AMS>
+<ams type="MAST" version="1.0">
+ <axis axisname="X" distance="80">
+  <level rightKL="266.831" leftKL="261.848" leftKR="81.8439" rightKR="86.8158" height="0"/>
+  <level rightKL="266.608" leftKL="262.06" leftKR="82.0542" rightKR="86.5983" height="10"/>
+  <level rightKL="266.397" leftKL="262.285" leftKR="82.2792" rightKR="86.3858" height="20"/>
+  <level rightKL="266.19" leftKL="262.496" leftKR="82.4903" rightKR="86.1808" height="30"/>
+  <level rightKL="265.965" leftKL="262.717" leftKR="82.7108" rightKR="85.9561" height="40"/>
+  <level rightKL="265.75" leftKL="262.936" leftKR="82.9231" rightKR="85.7422" height="50"/>
+  <level rightKL="265.548" leftKL="263.143" leftKR="83.1347" rightKR="85.5439" height="60"/>
+  <level rightKL="265.341" leftKL="263.359" leftKR="83.3519" rightKR="85.3364" height="70"/>
+  <level rightKL="265.113" leftKL="263.58" leftKR="83.5719" rightKR="85.11" height="80"/>
+  <level rightKL="265.11" leftKL="263.595" leftKR="83.5869" rightKR="85.1047" height="90"/>
+  <level rightKL="265.115" leftKL="263.599" leftKR="83.5875" rightKR="85.1036" height="100"/>
+  <level rightKL="265.127" leftKL="263.599" leftKR="83.5861" rightKR="85.1206" height="110"/>
+ </axis>
+ <axis axisname="Y" distance="80">
+  <level rightKL="174.793" leftKL="171.069" leftKR="351.069" rightKR="354.794" height="10"/>
+  <level rightKL="174.617" leftKL="171.245" leftKR="351.244" rightKR="354.619" height="20"/>
+  <level rightKL="174.442" leftKL="171.416" leftKR="351.416" rightKR="354.444" height="30"/>
+  <level rightKL="174.263" leftKL="171.595" leftKR="351.596" rightKR="354.267" height="40"/>
+  <level rightKL="174.087" leftKL="171.768" leftKR="351.769" rightKR="354.09" height="50"/>
+  <level rightKL="173.918" leftKL="171.937" leftKR="351.94" rightKR="353.92" height="60"/>
+  <level rightKL="173.746" leftKL="172.107" leftKR="352.107" rightKR="353.748" height="70"/>
+  <level rightKL="173.556" leftKL="172.295" leftKR="352.291" rightKR="353.56" height="80"/>
+  <level rightKL="173.556" leftKL="172.305" leftKR="352.307" rightKR="353.555" height="90"/>
+  <level rightKL="173.561" leftKL="172.307" leftKR="352.313" rightKR="353.56" height="100"/>
+  <level rightKL="173.562" leftKL="172.309" leftKR="352.31" rightKR="353.562" height="110"/>
+ </axis>
+</ams>

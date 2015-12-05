@@ -21,17 +21,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tabWidget->setTabText(1, "Ось Y");
     ui->tabWidget->setTabText(2, "Диаграммы");
     ui->tabWidget->setVisible(false);
-    //setup views
-    //ui->graphicsViewX->scale(1, -1);
-    //ui->graphicsViewY->scale(1, -1);
-    //models
     this->modelX = new AMSModel(this);
     this->modelY = new AMSModel(this);
-    /*
-    connect(this->modelX, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(setupView()));
-    connect(this->modelY, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(setupView()));
-    */
     connect(this->modelX, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(drawResults()));
+    connect(this->modelY, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(drawResults()));
 }
 
 void
@@ -59,8 +52,8 @@ MainWindow::drawResults(){
         float ycoord = h*1000;
         dotsY.push_back(QPointF(xcoord, ycoord));
     }
-    ui->resultDrawX->setData(dotsX);
-    ui->resultDrawY->setData(dotsY);
+    ui->resultDrawX->setData(dotsX, modelX->getType());
+    ui->resultDrawY->setData(dotsY, modelY->getType());
 }
 
 MainWindow::~MainWindow()

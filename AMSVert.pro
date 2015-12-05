@@ -4,8 +4,8 @@
 #
 #-------------------------------------------------
 QMAKE_CXXFLAGS += -std=c++11
-INCLUDEPATH += /usr/local/qwt-6.1.0/include
-LIBS += -L/usr/local/qwt-6.1.0/lib -lqwt
+INCLUDEPATH += /usr/local/qwt-6.1.2/include
+LIBS += -L/usr/local/qwt-6.1.2/lib -lqwt
 
 QT       += core gui xml
 
