@@ -29,6 +29,11 @@ public slots:
     void createFromSDR();
     void setupView();
     void drawResults();
+private slots:
+    void on_distance_X_valueChanged(double arg1);
+
+    void on_distance_Y_valueChanged(double arg1);
+
 private:
     Ui::MainWindow *ui;
     AMSModel *modelX, *modelY;
