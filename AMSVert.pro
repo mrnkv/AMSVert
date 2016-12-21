@@ -4,12 +4,12 @@
 #
 #-------------------------------------------------
 QMAKE_CXXFLAGS += -std=c++11
-INCLUDEPATH += /usr/local/qwt-6.1.2/include
-LIBS += -L/usr/local/qwt-6.1.2/lib -lqwt
+#INCLUDEPATH += /usr/local/qwt-6.1.2/include
+LIBS += -lqwt-qt5
 
-QT       += core gui xml
+QT       += core gui xml widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4)
 
 TARGET = AMSVert
 TEMPLATE = app

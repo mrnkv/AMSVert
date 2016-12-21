@@ -1,6 +1,7 @@
 #ifndef AMSMODEL_H
 #define AMSMODEL_H
 
+//#include <QAbstractTableModel>
 #include <QAbstractTableModel>
 #include <QtXml/QDomDocument>
 
@@ -42,7 +43,7 @@ struct MesPoint{
     float nha;// горизонтальный "номализованный" угол
 };
 
-class AMSModel : public QAbstractTableModel
+class AMSModel : public QAbstractItemModel
 
 {
     Q_OBJECT
@@ -53,12 +54,15 @@ public:
         size_t levels,
         float dist,
         QObject *parent = 0);
-    int rowCount(const QModelIndex &parent)const;
-    int columnCount(const QModelIndex &parent)const;
-    QVariant data(const QModelIndex &index, int role) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QModelIndex parent(const QModelIndex &child) const Q_DECL_OVERRIDE;
+    int rowCount(const QModelIndex &parent) const Q_DECL_OVERRIDE;
+    int columnCount(const QModelIndex &parent) const Q_DECL_OVERRIDE;
     bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
+    QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex & /*index*/) const;
+    
     void setType(AMSModel::AMS_type);
     void setDistance(float);
     void addLevel(Level);

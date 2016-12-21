@@ -17,7 +17,7 @@ Level::Level()
 }
 
 AMSModel::AMSModel(QObject *parent) :
-    QAbstractTableModel(parent),
+    QAbstractItemModel(parent),
     levels(0)
 {
 }
@@ -26,7 +26,7 @@ AMSModel::AMSModel(AMSModel::AMS_type type,
          size_t lvls,
          float dist,
          QObject *parent):
-    QAbstractTableModel(parent),
+    QAbstractItemModel(parent),
     levels()
 {
     this->type = type;
@@ -42,8 +42,13 @@ AMSModel::rowCount(const QModelIndex &/*parent*/)const{
     return levels.size();
 }
 
+QModelIndex
+AMSModel::parent(const QModelIndex& /*child*/) const{
+    return QModelIndex();
+}
+
 int
-AMSModel::columnCount(const QModelIndex &/*parent*/)const{
+AMSModel::columnCount(const QModelIndex& /*parent*/)const{
     /*
      * высота
      * левый пояс левый круг
@@ -91,8 +96,18 @@ AMSModel::data(const QModelIndex &index, int role) const{
 }
 
 Qt::ItemFlags
-AMSModel::flags(const QModelIndex & /*index*/) const{
+AMSModel::flags(const QModelIndex& index) const{
+    if(!index.isValid()){
+        return 0;
+    }
     return Qt::ItemIsSelectable |  Qt::ItemIsEditable | Qt::ItemIsEnabled;
+}
+
+QModelIndex
+AMSModel::index(int row, int column, const QModelIndex& parent) const {
+    if(!hasIndex(row, column, parent))
+        return QModelIndex();
+    return createIndex(row, column, nullptr);
 }
 
 bool
