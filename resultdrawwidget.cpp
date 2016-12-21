@@ -3,11 +3,17 @@
 #include <QDebug>
 #include <QtAlgorithms>
 #include <QVBoxLayout>
+
+#include <qwt_symbol.h>
+
 #include "resultdrawwidget.h"
+
 
 ResultDrawWidget::ResultDrawWidget(QWidget *parent) :
     QWidget(parent)
+
 {
+    markers = new QVector<QwtPlotMarker*>();
     mastPlot = new QwtPlot(this);
     mastPlot->setTitle("Mast dislocations");
     QPen blue_pen = QPen(Qt::blue, 3);
@@ -16,6 +22,11 @@ ResultDrawWidget::ResultDrawWidget(QWidget *parent) :
     mastCurve = new QwtPlotCurve();
     mastCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
     mastCurve->setPen(blue_pen);
+
+    symbol = new QwtSymbol(QwtSymbol::Rect);
+    symbol->setSize(QSize(5,5));
+
+    mastCurve->setSymbol(symbol);
     mastCurve->attach(mastPlot);
 
     limitCurveLeft = new QwtPlotCurve();
@@ -42,6 +53,20 @@ ResultDrawWidget::setData(QVector<QPointF> data, AMSModel::AMS_type type){
         qDebug() << "Hi" << *i;
     }
     */
+    for(auto m = markers->begin(); m != markers->end(); ++m){
+        delete(*m);
+    }
+
+    markers->clear();
+
+    for(auto p : data){
+        QwtPlotMarker *m = new QwtPlotMarker();
+        m->attach(this->mastPlot);
+        m->setValue(p.rx() + 30, p.ry());
+        m->setLabel(QString("%1").arg(p.rx()));
+        markers->push_back(m);
+    }
+
     float scale = (type == AMSModel::MAST ? 1000 : 1500);
     float height = data[data.size() - 1].ry();
     float width = height/scale;

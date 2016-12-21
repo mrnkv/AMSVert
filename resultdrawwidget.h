@@ -2,12 +2,15 @@
 #define RESULTDRAWWIDGET_H
 
 #include <QWidget>
+#include <QVector>
 
 #include "amsmodel.h"
 
-#include <qwt/qwt_plot.h>
-#include <qwt/qwt_plot_curve.h>
-#include <qwt/qwt_plot_grid.h>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
+#include <qwt_plot_grid.h>
+#include <qwt_plot_marker.h>
+#include <qwt_symbol.h>
 
 
 
@@ -28,6 +31,8 @@ private:
     QwtPlotCurve *mastCurve;
     QwtPlotCurve *limitCurveRight, *limitCurveLeft;
     QwtPlotGrid *grid;
+    QwtSymbol *symbol;
+    QVector<QwtPlotMarker *> *markers;
 };
 
 #endif // RESULTDRAWWIDGET_H

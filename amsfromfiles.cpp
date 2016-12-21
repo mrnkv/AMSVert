@@ -8,8 +8,8 @@ AmsFromFiles::AmsFromFiles(QWidget *parent) :
     ui(new Ui::AmsFromFiles)
 {
     ui->setupUi(this);
-    ui->amsType->addItem("Мачта");
-    ui->amsType->addItem("Башня");
+    ui->amsType->addItem(tr("Mast"));
+    ui->amsType->addItem(tr("Tower"));
 
 }
 
@@ -40,23 +40,23 @@ AmsFromFiles::getFileY(){
 }
 
 void
-AmsFromFiles::selectXFile(){
+AmsFromFiles::setFileX(){
 
-    fileXname = QFileDialog::getOpenFileName(this, tr("Выбрать файл измерений"), "",
-                                                    tr("Файлы SDR (*.SDR)"));
+    fileXname = QFileDialog::getOpenFileName(this, tr("Select measurements file"), "",
+                                                    tr("Files SDR (*.SDR)"));
     ui->fileX->setText(fileXname);
 }
 
 void
-AmsFromFiles::selectYFile(){
-    fileYname = QFileDialog::getOpenFileName(this, tr("Выбрать файл измерений"), "",
-                                                    tr("Файлы SDR (*.SDR)"));
+AmsFromFiles::selFileY(){
+    fileYname = QFileDialog::getOpenFileName(this, tr("Select measurements file"), "",
+                                                    tr("Files SDR (*.SDR)"));
     ui->fileY->setText(fileYname);
 }
 
 AMSModel::AMS_type
 AmsFromFiles::getType(){
-    if (ui->amsType->currentText() == "Мачта")
+    if (ui->amsType->currentText() == tr("Mast"))
         return AMSModel::MAST;
     return AMSModel::TOWER;
 }

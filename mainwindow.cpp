@@ -76,6 +76,8 @@ MainWindow::openFile(){
                     ui->tabWidget->setVisible(true);
                     ui->levels_X->setModel(modelX);
                     ui->levels_Y->setModel(modelY);
+                    ui->distance_X->setValue(modelX->getDistance());
+                    ui->distance_Y->setValue(modelY->getDistance());
                     setupView();
                 }
             }
@@ -194,6 +196,8 @@ MainWindow::createFromSDR(){
     ui->tabWidget->setVisible(true);
     ui->levels_X->setModel(modelX);
     ui->levels_Y->setModel(modelY);
+    ui->distance_X->setValue(modelX->getDistance());
+    ui->distance_Y->setValue(modelY->getDistance());
 }
 
 bool
@@ -250,6 +254,8 @@ MainWindow::readDataFromXML(QDomDocument doc){
             }
         }
     }
+    ui->distance_X->setValue(modelX->getDistance());
+    ui->distance_Y->setValue(modelY->getDistance());
     emit modelX->dataChanged(QModelIndex(), QModelIndex());
     emit modelY->dataChanged(QModelIndex(), QModelIndex());
     return true;
@@ -342,10 +348,24 @@ MainWindow::newFile(){
         ui->tabWidget->setVisible(true);
         ui->levels_X->setModel(modelX);
         ui->levels_Y->setModel(modelY);
+        ui->distance_X->setValue(modelX->getDistance());
+        ui->distance_Y->setValue(modelY->getDistance());
 
     }
 }
 
 void
 MainWindow::setupView(){
+}
+
+void MainWindow::on_distance_X_valueChanged(double arg1)
+{
+    modelX->setDistance(arg1);
+    emit modelX->dataChanged(QModelIndex(), QModelIndex());
+}
+
+void MainWindow::on_distance_Y_valueChanged(double arg1)
+{
+    modelY->setDistance(arg1);
+    emit modelY->dataChanged(QModelIndex(), QModelIndex());
 }

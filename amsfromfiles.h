@@ -22,8 +22,8 @@ public:
     AMSModel::AMS_type getType();
 
 public slots:
-    void selectXFile();
-    void selectYFile();
+    void setFileX();
+    void selFileY();
 private:
     Ui::AmsFromFiles *ui;
     QString fileXname;
