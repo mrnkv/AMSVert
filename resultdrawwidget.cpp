@@ -4,7 +4,7 @@
 #include <QtAlgorithms>
 #include <QVBoxLayout>
 
-#include <qwt_symbol.h>
+#include <qwt/qwt_symbol.h>
 
 #include "resultdrawwidget.h"
 
