@@ -1,15 +1,10 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2014-04-18T20:54:29
-#
-#-------------------------------------------------
 QMAKE_CXXFLAGS += -std=c++11
 INCLUDEPATH += /usr/local/qwt-6.1.2/include
 LIBS += -L/usr/local/qwt-6.1.2/lib -lqwt
 
-QT       += core gui xml
+QT       += core gui xml widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 5)
 
 TARGET = AMSVert
 TEMPLATE = app
@@ -31,3 +26,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     newamsdialog.ui \
     amsfromfiles.ui
+
+RESOURCES += \
+    resources.qrc
